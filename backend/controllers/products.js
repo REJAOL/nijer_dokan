@@ -41,11 +41,24 @@ const add = async (req,res)=>{
 }
 
 const get = async (req,res)=>{
-    const products = await Product.find().populate('category')
+    const {minPrice, maxPrice} = req.query;
+    let filter = {}
+    filter.price={}
+    if(minPrice){
+        filter.price.$gte =Number(minPrice)
+    }
+    if(maxPrice){
+        filter.price.$lte =Number(maxPrice)
+    }
+
+    const products = await Product.find(filter).populate('category')
     res.json({
         success:true,
+        count:products.length,
         products
     })
+
+
 }
 
 const update = async(req,res)=>{
